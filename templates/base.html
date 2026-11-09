@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Vidéothèque{% endblock %} · Vidéothèque</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('catalog') }}">Vidéothèque</a>
+
+    <nav>
+      {% if logged_in %}
+        <a href="{{ url_for('catalog') }}">Catalogue</a>
+        <a href="{{ url_for('favorites') }}">Mes favoris</a>
+        {% if is_admin %}
+          <a href="{{ url_for('new_film') }}">Ajouter un film</a>
+          <a href="{{ url_for('admin_users') }}">Comptes</a>
+        {% endif %}
+        <a href="{{ url_for('profile') }}">
+          {{ current_user.username if current_user else "Mon profil" }}
+        </a>
+        <form method="post" action="{{ url_for('logout') }}" class="inline">
+          <button type="submit" class="link">Déconnexion</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('login') }}">Connexion</a>
+        <a href="{{ url_for('register') }}">Inscription</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <p class="flash {{ category }}">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

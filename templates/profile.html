@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Mon profil{% endblock %}
+{% block content %}
+<h1>Mon profil</h1>
+
+{% if errors %}
+<div class="errors">
+  <ul>
+    {% for error in errors %}<li>{{ error }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<section class="card">
+  <form method="post" action="{{ url_for('profile') }}">
+    <div class="grid-2">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" value="{{ user.email }}" readonly>
+        <p class="hint">L'email ne peut pas être modifié.</p>
+      </div>
+
+      <div class="field">
+        <label for="username">Nom d'utilisateur</label>
+        <input type="text" id="username" name="username" value="{{ form.username or '' }}"
+               minlength="3" maxlength="30" autocomplete="username" required>
+      </div>
+    </div>
+
+    <p class="muted">
+      Rôle : {{ "Administrateur" if "admin" in user.roles else "Utilisateur" }}
+      · {{ user.favorites | length }} film{{ "s" if user.favorites | length > 1 }} en favori
+    </p>
+
+    <h2>Changer de mot de passe</h2>
+    <p class="hint">Laissez ces champs vides pour garder votre mot de passe actuel.</p>
+
+    <div class="field">
+      <label for="current_password">Mot de passe actuel</label>
+      <input type="password" id="current_password" name="current_password"
+             autocomplete="current-password">
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="new_password">Nouveau mot de passe</label>
+        <input type="password" id="new_password" name="new_password"
+               minlength="8" maxlength="128" autocomplete="new-password">
+      </div>
+
+      <div class="field">
+        <label for="new_password_confirm">Confirmation</label>
+        <input type="password" id="new_password_confirm" name="new_password_confirm"
+               minlength="8" maxlength="128" autocomplete="new-password">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit">Enregistrer</button>
+    </div>
+  </form>
+</section>
+
+<section class="card danger-zone">
+  <h2>Supprimer mon compte</h2>
+  <p>Cette action est définitive : votre compte et vos favoris seront supprimés.</p>
+  <form method="post" action="{{ url_for('delete_account') }}">
+    <label class="checkbox">
+      <input type="checkbox" name="confirm" value="1" required>
+      Je confirme vouloir supprimer mon compte
+    </label>
+    <div class="actions">
+      <button type="submit" class="danger">Supprimer mon compte</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

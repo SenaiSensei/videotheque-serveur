@@ -1,0 +1,50 @@
+{# Éléments réutilisés par plusieurs pages.
+   Import : {% from "_macros.html" import film_card, errors_box with context %} #}
+
+{% macro errors_box(errors) %}
+  {% if errors %}
+  <div class="errors" role="alert">
+    <ul>
+      {% for error in errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro favorite_button(film, is_favorite, small=True) %}
+  {% set endpoint = "remove_favorite" if is_favorite else "add_favorite" %}
+  <form class="inline" method="post" action="{{ url_for(endpoint, film_id=film._id) }}">
+    <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
+    <button type="submit" class="{{ 'small' if small }} {{ 'secondary' if is_favorite }}">
+      {{ "Retirer des favoris" if is_favorite else "Ajouter aux favoris" }}
+    </button>
+  </form>
+{% endmacro %}
+
+{% macro film_card(film, is_favorite) %}
+<article class="film-card">
+  <h3><a href="{{ url_for('film', film_id=film._id) }}">{{ film.title }}</a></h3>
+  <p class="muted" style="margin: 0">
+    {{ film.year }} · {{ film.director.first_name }} {{ film.director.last_name }}
+  </p>
+
+  {% if film.genres %}
+  <div class="tags">
+    {% for genre in film.genres %}<span class="tag">{{ genre }}</span>{% endfor %}
+  </div>
+  {% endif %}
+
+  {% if film.supports %}
+  <p class="muted" style="margin: 0">
+    {% for support in film.supports %}{{ support_types[support.type] }}{% if not loop.last %}, {% endif %}{% endfor %}
+  </p>
+  {% endif %}
+
+  <div class="actions">
+    {{ favorite_button(film, is_favorite) }}
+    {% if is_admin %}
+      <a class="btn small secondary" href="{{ url_for('edit_film', film_id=film._id) }}">Modifier</a>
+    {% endif %}
+  </div>
+</article>
+{% endmacro %}

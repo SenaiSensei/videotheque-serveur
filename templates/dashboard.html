@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<div class="film-header">
+  <h1>Tableau de bord</h1>
+  <a class="btn" href="{{ url_for('new_film') }}">Ajouter un film</a>
+</div>
+
+<section class="stats">
+  <div class="stat"><span class="stat-value">{{ stats.films }}</span><span class="stat-label">films</span></div>
+  <div class="stat"><span class="stat-value">{{ stats.users }}</span><span class="stat-label">comptes</span></div>
+  <div class="stat"><span class="stat-value">{{ stats.admins }}</span><span class="stat-label">administrateur{{ "s" if stats.admins > 1 }}</span></div>
+  <div class="stat"><span class="stat-value">{{ stats.favorites }}</span><span class="stat-label">favoris</span></div>
+</section>
+
+<p class="muted">
+  {% for value, label in support_types.items() %}
+    {{ label }} : {{ stats.supports[value] }} film{{ "s" if stats.supports[value] > 1 }} ·
+  {% endfor %}
+  sans support : {{ stats.without_support }}
+</p>
+
+<h2 id="films">Films</h2>
+{% if films %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Titre</th><th>Année</th><th>Réalisateur</th><th>Supports</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for film in films %}
+      <tr>
+        <td><a href="{{ url_for('film', film_id=film._id) }}">{{ film.title }}</a></td>
+        <td>{{ film.year }}</td>
+        <td>{{ film.director.first_name }} {{ film.director.last_name }}</td>
+        <td>
+          {% for support in film.supports %}{{ support_types[support.type] }}{% if not loop.last %}, {% endif %}
+          {% else %}<span class="empty">aucun</span>{% endfor %}
+        </td>
+        <td>
+          <div class="actions" style="margin: 0">
+            <a class="btn small secondary" href="{{ url_for('edit_film', film_id=film._id) }}">Modifier</a>
+            <form class="inline" method="post" action="{{ url_for('delete_film', film_id=film._id) }}"
+                  onsubmit="return confirm('Supprimer définitivement ce film ?');">
+              <input type="hidden" name="next" value="{{ url_for('dashboard', _anchor='films') }}">
+              <button type="submit" class="small danger">Supprimer</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <p class="empty">Le catalogue est vide.</p>
+{% endif %}
+
+<h2 id="comptes">Comptes</h2>
+{% include "_users_table.html" %}
+{% endblock %}

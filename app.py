@@ -274,6 +274,7 @@ def _save_film(film_id):
 @app.post("/admin/films/<film_id>/delete")
 @admin_required
 def delete_film(film_id):
+    next_url = forms.safe_next(request.form.get("next"), url_for("catalog"))
     try:
         api.delete_film(film_id)
         flash("Film supprimé.", "success")
@@ -281,16 +282,29 @@ def delete_film(film_id):
         if err.status != 404:
             raise
         flash("Ce film n'existe plus.", "error")
-    return redirect(url_for("catalog"))
+    return redirect(next_url)
+
+
+# Tableau de bord administrateur
+
+@app.route("/admin")
+@admin_required
+def dashboard():
+    films = api.get_films()
+    users = api.get_users()
+    stats = {
+        "films": len(films),
+        "users": len(users),
+        "admins": sum("admin" in u["roles"] for u in users),
+        "favorites": sum(len(u["favorites"]) for u in users),
+        "supports": {kind: sum(any(s["type"] == kind for s in f["supports"]) for f in films)
+                     for kind in forms.SUPPORT_TYPES},
+        "without_support": sum(not f["supports"] for f in films),
+    }
+    return render_template("dashboard.html", films=films, users=users, stats=stats)
 
 
 # Administration des comptes
-
-@app.route("/admin/users")
-@admin_required
-def admin_users():
-    return render_template("admin_users.html", users=api.get_users())
-
 
 @app.post("/admin/users/<user_id>/delete")
 @admin_required
@@ -301,14 +315,14 @@ def admin_delete_user(user_id):
         if err.status not in (404, 409):
             raise
         flash(err.message, "error")
-        return redirect(url_for("admin_users"))
+        return redirect(url_for("dashboard", _anchor="comptes"))
 
     if user_id == g.user["_id"]:
         session.clear()
         flash("Votre compte a été supprimé.", "success")
         return redirect(url_for("login"))
     flash("Compte supprimé.", "success")
-    return redirect(url_for("admin_users"))
+    return redirect(url_for("dashboard", _anchor="comptes"))
 
 
 @app.post("/admin/users/<user_id>/roles")
@@ -321,12 +335,12 @@ def admin_update_roles(user_id):
         if err.status not in (400, 404, 409):
             raise
         flash(err.message, "error")
-        return redirect(url_for("admin_users"))
+        return redirect(url_for("dashboard", _anchor="comptes"))
 
     flash("Rôles mis à jour.", "success")
     if user_id == g.user["_id"] and "admin" not in roles:
         return redirect(url_for("catalog"))  # l'administrateur vient de retirer ses propres droits
-    return redirect(url_for("admin_users"))
+    return redirect(url_for("dashboard", _anchor="comptes"))
 
 
 if __name__ == "__main__":

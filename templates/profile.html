@@ -1,15 +1,10 @@
 {% extends "base.html" %}
+{% from "_macros.html" import errors_box with context %}
 {% block title %}Mon profil{% endblock %}
 {% block content %}
 <h1>Mon profil</h1>
 
-{% if errors %}
-<div class="errors">
-  <ul>
-    {% for error in errors %}<li>{{ error }}</li>{% endfor %}
-  </ul>
-</div>
-{% endif %}
+{{ errors_box(errors) }}
 
 <section class="card">
   <form method="post" action="{{ url_for('profile') }}">

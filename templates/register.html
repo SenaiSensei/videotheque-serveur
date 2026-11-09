@@ -1,16 +1,11 @@
 {% extends "base.html" %}
+{% from "_macros.html" import errors_box with context %}
 {% block title %}Inscription{% endblock %}
 {% block content %}
 <section class="card narrow">
   <h1>Créer un compte</h1>
 
-  {% if errors %}
-  <div class="errors">
-    <ul>
-      {% for error in errors %}<li>{{ error }}</li>{% endfor %}
-    </ul>
-  </div>
-  {% endif %}
+  {{ errors_box(errors) }}
 
   <form method="post" action="{{ url_for('register') }}">
     <div class="field">

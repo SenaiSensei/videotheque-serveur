@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Mes favoris{% endblock %}
+{% block content %}
+<h1>Mes favoris</h1>
+
+{% if films %}
+<p class="muted">{{ films | length }} film{{ "s" if films | length > 1 }}</p>
+
+<div class="film-grid">
+  {% for film in films %}
+  <article class="film-card">
+    <h3><a href="{{ url_for('film', film_id=film._id) }}">{{ film.title }}</a></h3>
+    <p class="muted" style="margin: 0">
+      {{ film.year }} · {{ film.director.first_name }} {{ film.director.last_name }}
+    </p>
+
+    {% if film.genres %}
+    <div class="tags">
+      {% for genre in film.genres %}<span class="tag">{{ genre }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="actions">
+      <form class="inline" method="post" action="{{ url_for('remove_favorite', film_id=film._id) }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" class="small secondary">Retirer des favoris</button>
+      </form>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+  <p class="empty">Vous n'avez pas encore de favori.</p>
+  <p><a class="btn" href="{{ url_for('catalog') }}">Parcourir le catalogue</a></p>
+{% endif %}
+{% endblock %}

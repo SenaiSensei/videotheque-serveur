@@ -17,7 +17,7 @@ services:
 
   api:
     build: .
-    image: rt0705-flask
+    image: rt0705-api
     restart: unless-stopped
     environment:
       MONGO_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/videotheque?authSource=admin

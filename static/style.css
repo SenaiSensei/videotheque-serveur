@@ -430,3 +430,46 @@ th { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; }
   gap: 0.5rem;
   grid-column: 1 / -1;
 }
+
+/* Bouton favori en étoile */
+
+.film-card-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+button.fav {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+}
+
+button.fav svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  transition: transform 0.15s, fill 0.15s, stroke 0.15s;
+}
+
+button.fav:hover { background: var(--bg); }
+button.fav:hover svg { stroke: var(--star); transform: scale(1.15); }
+
+button.fav.active svg { fill: var(--star); stroke: var(--star); }
+
+button.fav.large { width: 2.75rem; height: 2.75rem; }
+button.fav.large svg { width: 2rem; height: 2rem; }
+
+button.fav:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+:root { --star: #f5b301; }

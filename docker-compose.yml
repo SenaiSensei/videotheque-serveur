@@ -1,57 +1,21 @@
-services:
-  mongo:
-    image: mongo:8
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - data-net
-    healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+name: rt0705-presentation
 
-  api:
+services:
+  presentation:
     build: .
-    image: rt0705-api
+    image: rt0705-presentation
     restart: unless-stopped
     environment:
-      MONGO_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/videotheque?authSource=admin
-      SEED_FILE: /app/data/videotheque.json
-      JWT_SECRET: ${JWT_SECRET}
+      API_URL: http://api:5000
+      SECRET_KEY: ${SECRET_KEY}
     volumes:
-      - ../API:/app
-    depends_on:
-      mongo:
-        condition: service_healthy
+      - .:/app
     networks:
-      - data-net
       - presentation-net
     ports:
-      - "127.0.0.1:5001:5000"
-
-  # presentation:
-  #   image: rt0705-flask
-  #   restart: unless-stopped
-  #   environment:
-  #     API_URL: http://api:5000
-  #     SECRET_KEY: ${SECRET_KEY}
-  #   volumes:
-  #     - .:/app
-  #   depends_on:
-  #     - api
-  #   networks:
-  #     - presentation-net
-  #   ports:
-  #     - "5000:5000"
-
-volumes:
-  mongo-data:
+      - "5000:5000"
 
 networks:
-  data-net:
   presentation-net:
+    name: rt0705-presentation-net
+    external: true

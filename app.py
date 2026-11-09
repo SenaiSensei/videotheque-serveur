@@ -188,8 +188,17 @@ def catalog():
             if err.status != 400:
                 raise
             errors.append(err.message)
+    # Genres proposés dans la liste déroulante : ceux de tout le catalogue,
+    # sans doublon ni différence de casse (« Drame » et « drame » ne comptent qu'une fois)
+    all_films = films if not filters and not errors else api.get_films()
+    genres = {}
+    for film in all_films:
+        for genre in film["genres"]:
+            genres.setdefault(genre.casefold(), genre)
+    genres = sorted(genres.values(), key=str.casefold)
+
     return render_template("catalog.html", films=films, filters=filters, errors=errors,
-                           favorites=set(g.user["favorites"]))
+                           genres=genres, favorites=set(g.user["favorites"]))
 
 
 @app.route("/films/<film_id>")
@@ -305,6 +314,7 @@ def dashboard():
 
 
 # Administration des comptes
+
 
 @app.post("/admin/users/<user_id>/delete")
 @admin_required

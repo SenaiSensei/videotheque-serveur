@@ -31,7 +31,12 @@
     </div>
     <div class="field">
       <label for="genre">Genre</label>
-      <input type="search" id="genre" name="genre" value="{{ filters.genre or '' }}">
+      <select id="genre" name="genre">
+        <option value="">Tous</option>
+        {% for genre in genres %}
+          <option value="{{ genre }}" {% if filters.genre and filters.genre | lower == genre | lower %}selected{% endif %}>{{ genre }}</option>
+        {% endfor %}
+      </select>
     </div>
     <div class="field">
       <label for="year">Année</label>

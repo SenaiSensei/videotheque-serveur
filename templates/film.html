@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ film.title }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('catalog') }}">← Retour au catalogue</a></p>
+
+<article class="card">
+  <div class="film-header">
+    <h1>{{ film.title }} <span class="muted">({{ film.year }})</span></h1>
+
+    {% if is_favorite %}
+      <form class="inline" method="post" action="{{ url_for('remove_favorite', film_id=film._id) }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" class="secondary">Retirer des favoris</button>
+      </form>
+    {% else %}
+      <form class="inline" method="post" action="{{ url_for('add_favorite', film_id=film._id) }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit">Ajouter aux favoris</button>
+      </form>
+    {% endif %}
+  </div>
+
+  {% if film.description %}
+    <p>{{ film.description }}</p>
+  {% endif %}
+
+  <dl class="film-meta">
+    <dt>Réalisateur</dt>
+    <dd>{{ film.director.first_name }} {{ film.director.last_name }}</dd>
+
+    <dt>Acteurs</dt>
+    <dd>
+      {% for actor in film.actors %}
+        {{ actor.first_name }} {{ actor.last_name }}{% if not loop.last %}, {% endif %}
+      {% else %}
+        <span class="empty">Non renseignés</span>
+      {% endfor %}
+    </dd>
+
+    <dt>Genres</dt>
+    <dd>
+      {% if film.genres %}
+        <div class="tags">
+          {% for genre in film.genres %}<span class="tag">{{ genre }}</span>{% endfor %}
+        </div>
+      {% else %}
+        <span class="empty">Non renseignés</span>
+      {% endif %}
+    </dd>
+  </dl>
+
+  <h2>Supports</h2>
+  {% if film.supports %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Type</th><th>Emplacement</th></tr>
+      </thead>
+      <tbody>
+        {% for support in film.supports %}
+        <tr>
+          <td>{{ support_types[support.type] }}</td>
+          <td>{{ support.location }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="empty">Aucun support enregistré.</p>
+  {% endif %}
+
+  {% if is_admin %}
+  <div class="actions">
+    <a class="btn secondary" href="{{ url_for('edit_film', film_id=film._id) }}">Modifier</a>
+    <form class="inline" method="post" action="{{ url_for('delete_film', film_id=film._id) }}"
+          onsubmit="return confirm('Supprimer définitivement ce film ?');">
+      <button type="submit" class="danger">Supprimer</button>
+    </form>
+  </div>
+  {% endif %}
+</article>
+{% endblock %}

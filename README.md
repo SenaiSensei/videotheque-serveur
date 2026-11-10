@@ -17,6 +17,7 @@ La vidéothèque est un catalogue de films commun à tous les utilisateurs. Ce s
 - inscription, connexion et déconnexion ;
 - modification du profil (nom d'utilisateur, mot de passe) et suppression du compte ;
 - catalogue en cartes avec affiches, et fiche détaillée de chaque film ;
+- catalogue paginé (bandeau Précédent/Suivant, les filtres sont conservés) ;
 - recherche par titre, réalisateur, acteur, genre, année ou support (liste déroulante pour le genre et le support) ;
 - favoris : une étoile ajoute ou retire un film.
 

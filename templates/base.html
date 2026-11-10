@@ -6,13 +6,20 @@
   <title>{% block title %}Vidéothèque{% endblock %} · Vidéothèque</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+{% from "_macros.html" import icon %}
 <body>
   <header class="topbar">
-    <a class="brand" href="{{ url_for('catalog') }}">Vidéothèque</a>
+    <a class="brand" href="{{ url_for('catalog') }}">
+      <span class="brand-logo">{{ icon("film") }}</span>
+      Vidéothèque
+    </a>
 
     <nav>
       {% if logged_in %}
-        <a href="{{ url_for('catalog') }}">Catalogue</a>
+        <a class="nav-link {{ 'active' if request.endpoint in ('catalog', 'film') }}" href="{{ url_for('catalog') }}"
+           {% if request.endpoint == 'catalog' %}aria-current="page"{% endif %}>
+          {{ icon("grid") }} Catalogue
+        </a>
 
         <details class="user-menu">
           <summary>
@@ -33,8 +40,8 @@
           </div>
         </details>
       {% else %}
-        <a href="{{ url_for('login') }}">Connexion</a>
-        <a href="{{ url_for('register') }}">Inscription</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'login' }}" href="{{ url_for('login') }}">Connexion</a>
+        <a class="nav-link {{ 'active' if request.endpoint == 'register' }}" href="{{ url_for('register') }}">Inscription</a>
       {% endif %}
     </nav>
   </header>

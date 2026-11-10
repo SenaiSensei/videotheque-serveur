@@ -24,7 +24,7 @@
         <td>
           <form class="actions" style="margin: 0" method="post"
                 action="{{ url_for('admin_update_roles', user_id=user._id) }}"
-                {% if is_me %}onsubmit="return this.admin.checked || confirm('Retirer vos propres droits d\'administrateur ?');"{% endif %}>
+                {% if is_me %}data-confirm="Retirer vos propres droits d'administrateur ?" data-confirm-skip-if-checked="admin"{% endif %}>
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <label class="checkbox" style="margin: 0">
               <input type="checkbox" name="admin" value="1" {% if "admin" in user.roles %}checked{% endif %}>
@@ -36,7 +36,7 @@
         <td>
           <form class="inline" method="post"
                 action="{{ url_for('admin_delete_user', user_id=user._id) }}"
-                onsubmit="return confirm('Supprimer définitivement ce compte ?');">
+                data-confirm="Supprimer définitivement ce compte ?">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <button type="submit" class="small danger icon-only" title="Supprimer"
                     aria-label="Supprimer le compte {{ user.username }}">{{ icon("trash") }}</button>

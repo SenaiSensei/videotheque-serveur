@@ -64,7 +64,7 @@
     <span class="poster-placeholder" aria-hidden="true">{{ film.title[:1] | upper }}</span>
     {% if film.poster_url %}
       <img src="{{ film.poster_url }}" alt="Affiche de {{ film.title }}" loading="lazy"
-           referrerpolicy="no-referrer" onerror="this.remove()">
+           referrerpolicy="no-referrer">
     {% endif %}
   </div>
 {% endmacro %}

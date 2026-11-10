@@ -14,8 +14,3 @@ services:
       - presentation-net
     ports:
       - "5000:5000"
-
-networks:
-  presentation-net:
-    name: rt0705-presentation-net
-    external: true

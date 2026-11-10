@@ -32,6 +32,7 @@
 
 <form class="card" method="post"
       action="{{ url_for('edit_film', film_id=film_id) if film_id else url_for('new_film') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
   <div class="grid-2">
     <div class="field">

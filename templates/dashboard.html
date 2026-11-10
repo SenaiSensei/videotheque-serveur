@@ -44,6 +44,7 @@
                title="Modifier" aria-label="Modifier {{ film.title }}">{{ icon("edit") }}</a>
             <form class="inline" method="post" action="{{ url_for('delete_film', film_id=film._id) }}"
                   onsubmit="return confirm('Supprimer définitivement ce film ?');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <input type="hidden" name="next" value="{{ url_for('dashboard', _anchor='films') }}">
               <button type="submit" class="small danger icon-only" title="Supprimer"
                       aria-label="Supprimer {{ film.title }}">{{ icon("trash") }}</button>

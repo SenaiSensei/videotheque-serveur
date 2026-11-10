@@ -1,5 +1,7 @@
 #!/usr/bin/python3
+import hmac
 import os
+import secrets
 from datetime import timedelta
 
 from flask import (Flask, abort, flash, g, jsonify, redirect, render_template,
@@ -17,6 +19,23 @@ app.config.update(
     PERMANENT_SESSION_LIFETIME=timedelta(hours=1),  # même durée que le jeton
 )
 
+def csrf_token():
+    """Jeton anti-CSRF propre à la session, créé au besoin."""
+    token = session.get("csrf_token")
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session["csrf_token"] = token
+    return token
+
+@app.before_request
+def csrf_protect():
+    """Vérifie le jeton anti-CSRF sur toute requête qui modifie des données."""
+    if request.method in ("POST", "PUT", "PATCH", "DELETE"):
+        sent = request.form.get("csrf_token", "") or request.headers.get("X-CSRF-Token", "")
+        expected = session.get("csrf_token", "")
+        if not expected or not hmac.compare_digest(sent, expected):
+            return error_page(403, "Jeton de sécurité invalide ou expiré. "
+                                   "Rechargez la page et réessayez.")
 
 @app.context_processor
 def inject_globals():
@@ -27,6 +46,7 @@ def inject_globals():
         "is_admin": is_admin(user),
         "logged_in": bool(session.get("user_id")),
         "support_types": forms.SUPPORT_TYPES,
+        "csrf_token": csrf_token(),
     }
 
 
@@ -85,7 +105,7 @@ def login():
         try:
             result = api.login(data["email"], data["password"])
         except api.ApiError as err:
-            if err.status not in (400, 401):
+            if err.status not in (400, 401, 429):
                 raise
             errors.append("Identifiants incorrects." if err.status == 401 else err.message)
     if errors:

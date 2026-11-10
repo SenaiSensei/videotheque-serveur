@@ -8,6 +8,7 @@
 
 <section class="card">
   <form method="post" action="{{ url_for('profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <div class="grid-2">
       <div class="field">
         <label for="email">Email</label>
@@ -60,6 +61,7 @@
   <h2>Supprimer mon compte</h2>
   <p>Cette action est définitive : votre compte et vos favoris seront supprimés.</p>
   <form method="post" action="{{ url_for('delete_account') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <label class="checkbox">
       <input type="checkbox" name="confirm" value="1" required>
       Je confirme vouloir supprimer mon compte

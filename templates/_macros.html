@@ -30,6 +30,7 @@
   {% set label = "Retirer des favoris" if is_favorite else "Ajouter aux favoris" %}
   <form class="inline" method="post" action="{{ url_for(endpoint, film_id=film._id) }}">
     <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <button type="submit" class="fav {{ 'active' if is_favorite }} {{ 'large' if not small }}"
             title="{{ label }}" aria-label="{{ label }}" aria-pressed="{{ 'true' if is_favorite else 'false' }}">
       <svg viewBox="0 0 24 24" aria-hidden="true">

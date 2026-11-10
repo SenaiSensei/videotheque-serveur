@@ -2,6 +2,7 @@
 import re
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+URL_RE = re.compile(r"^https?://[^\s<>\"']+$")
 SUPPORT_TYPES = {"dvd": "DVD", "bluray": "Blu-ray", "digital": "Numérique"}
 SEARCH_FIELDS = ("title", "director", "actor", "genre", "year", "support")
 
@@ -88,7 +89,7 @@ def film_from_form(form):
 
     Champs attendus : title, description, year, director_last_name, director_first_name,
     genres (séparés par des virgules), actor_last_name[] et actor_first_name[],
-    support_type[] et support_location[]. Les lignes vides sont ignorées.
+    support_type[] et support_location[], poster_url (facultatif). Les lignes vides sont ignorées.
     """
     errors = []
 
@@ -126,6 +127,10 @@ def film_from_form(form):
 
     genres = list(dict.fromkeys(g.strip() for g in _get(form, "genres").split(",") if g.strip()))
 
+    poster_url = _get(form, "poster_url")
+    if poster_url and (len(poster_url) > 500 or not URL_RE.match(poster_url)):
+        errors.append("L'affiche doit être une adresse web commençant par http:// ou https://.")
+
     film = {
         "title": title,
         "description": _get(form, "description"),
@@ -134,6 +139,7 @@ def film_from_form(form):
         "genres": genres,
         "year": year,
         "supports": supports,
+        "poster_url": poster_url,
     }
     return film, errors
 
@@ -149,6 +155,7 @@ def film_to_form(film):
         "genres": ", ".join(film.get("genres", [])),
         "actors": film.get("actors", []),
         "supports": film.get("supports", []),
+        "poster_url": film.get("poster_url", ""),
     }
 
 

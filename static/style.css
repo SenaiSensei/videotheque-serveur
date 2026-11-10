@@ -543,3 +543,47 @@ svg.icon {
 
 .btn.icon-only, button.icon-only { padding: 0.4rem; }
 .btn.small.icon-only, button.small.icon-only { padding: 0.35rem; }
+
+/* Affiches */
+
+.poster {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(145deg, var(--tag-bg), var(--border));
+  border-radius: 6px;
+}
+
+.poster img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.poster-placeholder {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.poster-card { margin: -0.25rem -0.25rem 0.4rem; }
+.poster-large { width: 240px; flex-shrink: 0; }
+.poster-large .poster-placeholder { font-size: 5rem; }
+
+.film-detail {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+}
+
+.film-info { flex: 1; min-width: 0; }
+
+@media (max-width: 600px) {
+  .film-detail { flex-direction: column; }
+  .poster-large { width: 60%; margin: 0 auto; }
+}

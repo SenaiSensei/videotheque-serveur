@@ -63,6 +63,13 @@
   </div>
 
   <div class="field">
+    <label for="poster_url">Affiche (adresse de l'image)</label>
+    <input type="url" id="poster_url" name="poster_url" value="{{ form.poster_url }}"
+           maxlength="500" placeholder="https://exemple.org/affiche.jpg">
+    <p class="hint">Facultatif. Lien direct vers une image (jpg, png, webp).</p>
+  </div>
+
+  <div class="field">
     <label for="genres">Genres</label>
     <input type="text" id="genres" name="genres" value="{{ form.genres }}" placeholder="Drame, Policier">
     <p class="hint">Séparés par des virgules.</p>

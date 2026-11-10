@@ -34,8 +34,20 @@
   </form>
 {% endmacro %}
 
+{% macro poster(film, size="card") %}
+  {# Affiche du film ; sans adresse, ou si l'image ne charge pas, l'initiale du titre est affichée. #}
+  <div class="poster poster-{{ size }}">
+    <span class="poster-placeholder" aria-hidden="true">{{ film.title[:1] | upper }}</span>
+    {% if film.poster_url %}
+      <img src="{{ film.poster_url }}" alt="Affiche de {{ film.title }}" loading="lazy"
+           referrerpolicy="no-referrer" onerror="this.remove()">
+    {% endif %}
+  </div>
+{% endmacro %}
+
 {% macro film_card(film, is_favorite) %}
 <article class="film-card">
+  <a href="{{ url_for('film', film_id=film._id) }}" tabindex="-1">{{ poster(film) }}</a>
   <div class="film-card-title">
     <h3><a href="{{ url_for('film', film_id=film._id) }}">{{ film.title }}</a></h3>
     {{ favorite_button(film, is_favorite) }}

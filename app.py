@@ -361,6 +361,16 @@ def admin_update_roles(user_id):
         return redirect(url_for("catalog"))  # l'administrateur vient de retirer ses propres droits
     return redirect(url_for("dashboard", _anchor="comptes"))
 
+@app.after_request
+def security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "same-origin"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; img-src 'self' https: data:; "
+        "style-src 'self' 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"
+    )
+    return response
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

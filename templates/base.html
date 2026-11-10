@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Vidéothèque{% endblock %} · Vidéothèque</title>
   <script>
-    // Appliqué avant l'affichage, pour éviter un flash du mauvais thème
     try {
       const theme = localStorage.getItem("theme");
       if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;

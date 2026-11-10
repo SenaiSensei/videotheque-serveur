@@ -71,11 +71,13 @@ videotheque-serveur
 ├── forms.py               validation des formulaires et conversion en JSON
 ├── static
 │   ├── style.css          feuille de style (thèmes clair et sombre)
+│   ├── theme-init.js      applique le thème enregistré avant l'affichage (dans le <head>)
 │   ├── theme.js           choix du thème
 │   ├── favorites.js       favoris sans rechargement
 │   ├── film_form.js       lignes d'acteurs et de supports
 │   ├── password.js        affichage des mots de passe
-│   └── menu.js            menu utilisateur
+│   ├── menu.js            menu utilisateur
+│   └── ui.js              confirmations et repli des affiches cassées
 └── templates
     ├── base.html          gabarit commun (barre de navigation, messages)
     ├── _macros.html       carte de film, affiche, étoile, icônes, erreurs

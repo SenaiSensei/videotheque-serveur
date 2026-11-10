@@ -1,3 +1,4 @@
+{% from "_macros.html" import icon with context %}
 {# Tableau des comptes, inclus dans dashboard.html (variables : users, current_user). #}
 <div class="table-wrap">
   <table>
@@ -35,7 +36,8 @@
           <form class="inline" method="post"
                 action="{{ url_for('admin_delete_user', user_id=user._id) }}"
                 onsubmit="return confirm('Supprimer définitivement ce compte ?');">
-            <button type="submit" class="small danger">Supprimer</button>
+            <button type="submit" class="small danger icon-only" title="Supprimer"
+                    aria-label="Supprimer le compte {{ user.username }}">{{ icon("trash") }}</button>
           </form>
         </td>
       </tr>

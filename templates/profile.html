@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import errors_box with context %}
+{% from "_macros.html" import errors_box, icon with context %}
 {% block title %}Mon profil{% endblock %}
 {% block content %}
 <h1>Mon profil</h1>
@@ -65,7 +65,7 @@
       Je confirme vouloir supprimer mon compte
     </label>
     <div class="actions">
-      <button type="submit" class="danger">Supprimer mon compte</button>
+      <button type="submit" class="danger">{{ icon("trash") }} Supprimer mon compte</button>
     </div>
   </form>
 </section>

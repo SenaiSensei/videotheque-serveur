@@ -1,6 +1,15 @@
 {# Éléments réutilisés par plusieurs pages.
    Import : {% from "_macros.html" import film_card, errors_box with context %} #}
 
+{% macro icon(name) %}
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+    {% if name == "plus" %}<path d="M12 5v14M5 12h14"/>
+    {% elif name == "edit" %}<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M14 6l4 4"/>
+    {% elif name == "trash" %}<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>
+    {% endif %}
+  </svg>
+{% endmacro %}
+
 {% macro errors_box(errors) %}
   {% if errors %}
   <div class="errors" role="alert">
@@ -49,7 +58,8 @@
 
   {% if is_admin %}
   <div class="actions">
-    <a class="btn small secondary" href="{{ url_for('edit_film', film_id=film._id) }}">Modifier</a>
+    <a class="btn small secondary icon-only" href="{{ url_for('edit_film', film_id=film._id) }}"
+       title="Modifier" aria-label="Modifier {{ film.title }}">{{ icon("edit") }}</a>
   </div>
   {% endif %}
 </article>

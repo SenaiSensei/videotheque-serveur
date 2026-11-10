@@ -179,7 +179,10 @@ textarea { min-height: 6rem; resize: vertical; }
 /* Boutons */
 
 .btn, button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   padding: 0.5rem 1rem;
   font: inherit;
   font-weight: 600;
@@ -524,3 +527,19 @@ button.password-toggle svg {
 }
 
 .toast.visible { opacity: 1; transform: translateY(0); }
+
+/* Icônes des boutons */
+
+svg.icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.btn.icon-only, button.icon-only { padding: 0.4rem; }
+.btn.small.icon-only, button.small.icon-only { padding: 0.35rem; }

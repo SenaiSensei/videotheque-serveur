@@ -6,7 +6,7 @@ services:
     image: rt0705-presentation
     restart: unless-stopped
     environment:
-      API_URL: http://api:5000
+      API_URL: ${API_URL}
       SECRET_KEY: ${SECRET_KEY}
     volumes:
       - .:/app

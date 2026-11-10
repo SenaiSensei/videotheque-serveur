@@ -13,9 +13,6 @@
     <nav>
       {% if logged_in %}
         <a href="{{ url_for('catalog') }}">Catalogue</a>
-        {% if is_admin %}
-          <a href="{{ url_for('new_film') }}">Ajouter un film</a>
-        {% endif %}
 
         <details class="user-menu">
           <summary>

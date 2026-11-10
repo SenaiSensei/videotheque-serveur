@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import film_card, errors_box, icon with context %}
+{% from "_macros.html" import film_card, errors_box, icon, pager with context %}
 {% block title %}Catalogue{% endblock %}
 {% block content %}
 <div class="film-header">
@@ -60,14 +60,15 @@
   </form>
 </details>
 
-{% if filters and not errors %}
-  <p class="muted">{{ films | length }} résultat{{ "s" if films | length > 1 }}</p>
+{% if not errors and (films or filters) %}
+  <p class="muted">{{ total }} résultat{{ "s" if total > 1 }}</p>
 {% endif %}
 
 {% if films %}
 <div class="film-grid">
   {% for film in films %}{{ film_card(film, film._id in favorites) }}{% endfor %}
 </div>
+{{ pager(page, pages, "catalog") }}
 {% elif not errors %}
   <p class="empty">{{ "Aucun film ne correspond à votre recherche." if filters else "Le catalogue est vide." }}</p>
 {% endif %}

@@ -1,6 +1,24 @@
 {# Éléments réutilisés par plusieurs pages.
    Import : {% from "_macros.html" import film_card, errors_box with context %} #}
 
+{% macro pager(page, pages, endpoint, param="page", anchor=None) %}
+  {% if pages > 1 %}
+  <nav class="pager" aria-label="Pagination">
+    {% if page > 1 %}
+      <a class="btn secondary small" href="{{ page_url(endpoint, param, page - 1, anchor) }}" rel="prev">‹ Précédent</a>
+    {% else %}
+      <span class="btn secondary small disabled" aria-disabled="true">‹ Précédent</span>
+    {% endif %}
+    <span class="pager-info">Page {{ page }} / {{ pages }}</span>
+    {% if page < pages %}
+      <a class="btn secondary small" href="{{ page_url(endpoint, param, page + 1, anchor) }}" rel="next">Suivant ›</a>
+    {% else %}
+      <span class="btn secondary small disabled" aria-disabled="true">Suivant ›</span>
+    {% endif %}
+  </nav>
+  {% endif %}
+{% endmacro %}
+
 {% macro icon(name, extra="") %}
   <svg class="icon {{ extra }}" viewBox="0 0 24 24" aria-hidden="true">
     {% if name == "plus" %}<path d="M12 5v14M5 12h14"/>

@@ -37,6 +37,13 @@ def csrf_protect():
             return error_page(403, "Jeton de sécurité invalide ou expiré. "
                                    "Rechargez la page et réessayez.")
 
+@app.template_global()
+def page_url(endpoint, param, page, anchor=None):
+    """URL de la page demandée, en conservant les filtres et l'autre pagination."""
+    args = request.args.to_dict()
+    args[param] = page
+    return url_for(endpoint, _anchor=anchor, **args) if anchor else url_for(endpoint, **args)
+
 @app.context_processor
 def inject_globals():
     """Variables disponibles dans tous les templates."""
@@ -200,25 +207,21 @@ def delete_account():
 @login_required
 def catalog():
     filters, errors = forms.search_filters(request.args)
-    films = []
+    page = request.args.get("page", 1, type=int)
+    result = {"films": [], "page": 1, "pages": 1, "total": 0}
+    genres = []
     if not errors:
         try:
-            films = api.get_films(filters)
+            result = api.get_films(filters, page=page)
+            genres = api.get_genres()
         except api.ApiError as err:
             if err.status != 400:
                 raise
             errors.append(err.message)
-    # Genres proposés dans la liste déroulante : ceux de tout le catalogue,
-    # sans doublon ni différence de casse (« Drame » et « drame » ne comptent qu'une fois)
-    all_films = films if not filters and not errors else api.get_films()
-    genres = {}
-    for film in all_films:
-        for genre in film["genres"]:
-            genres.setdefault(genre.casefold(), genre)
-    genres = sorted(genres.values(), key=str.casefold)
 
-    return render_template("catalog.html", films=films, filters=filters, errors=errors,
-                           genres=genres, favorites=set(g.user["favorites"]))
+    return render_template("catalog.html", films=result["films"], filters=filters, errors=errors,
+                           genres=genres, favorites=set(g.user["favorites"]),
+                           page=result["page"], pages=result["pages"], total=result["total"])
 
 
 @app.route("/films/<film_id>")
@@ -328,18 +331,12 @@ def delete_film(film_id):
 @app.route("/admin")
 @admin_required
 def dashboard():
-    films = api.get_films()
-    users = api.get_users()
-    stats = {
-        "films": len(films),
-        "users": len(users),
-        "admins": sum("admin" in u["roles"] for u in users),
-        "favorites": sum(len(u["favorites"]) for u in users),
-        "supports": {kind: sum(any(s["type"] == kind for s in f["supports"]) for f in films)
-                     for kind in forms.SUPPORT_TYPES},
-        "without_support": sum(not f["supports"] for f in films),
-    }
-    return render_template("dashboard.html", films=films, users=users, stats=stats)
+    films_page = api.get_films(page=request.args.get("fpage", 1, type=int), per_page=20)
+    users_page = api.get_users(page=request.args.get("upage", 1, type=int), per_page=20)
+    stats = api.get_stats()
+    return render_template("dashboard.html", stats=stats,
+                           films=films_page["films"], films_page=films_page,
+                           users=users_page["users"], users_page=users_page)
 
 
 # Administration des comptes

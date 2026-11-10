@@ -57,8 +57,22 @@ def _request(method, path, json=None, params=None, auth=True):
 
 # Films
 
-def get_films(filters=None):
-    return _request("GET", "/films", params=filters or {})["films"]
+def get_films(filters=None, page=None, per_page=None):
+    """Renvoie une page de films : {films, page, per_page, total, pages}."""
+    params = dict(filters or {})
+    if page:
+        params["page"] = page
+    if per_page:
+        params["per_page"] = per_page
+    return _request("GET", "/films", params=params)
+
+
+def get_genres():
+    return _request("GET", "/films/genres")["genres"]
+
+
+def get_stats():
+    return _request("GET", "/stats")
 
 
 def create_film(film):
@@ -90,8 +104,14 @@ def create_user(email, username, password):
                     auth=False)
 
 
-def get_users():
-    return _request("GET", "/users")["users"]
+def get_users(page=None, per_page=None):
+    """Renvoie une page de comptes : {users, page, per_page, total, pages}."""
+    params = {}
+    if page:
+        params["page"] = page
+    if per_page:
+        params["per_page"] = per_page
+    return _request("GET", "/users", params=params)
 
 
 def get_user(user_id):

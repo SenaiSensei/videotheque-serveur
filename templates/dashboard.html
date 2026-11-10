@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import icon with context %}
+{% from "_macros.html" import icon, pager with context %}
 {% block title %}Tableau de bord{% endblock %}
 {% block content %}
 <div class="film-header">
@@ -59,7 +59,9 @@
 {% else %}
   <p class="empty">Le catalogue est vide.</p>
 {% endif %}
+{{ pager(films_page.page, films_page.pages, "dashboard", "fpage", "films") }}
 
 <h2 id="comptes">Comptes</h2>
 {% include "_users_table.html" %}
+{{ pager(users_page.page, users_page.pages, "dashboard", "upage", "comptes") }}
 {% endblock %}

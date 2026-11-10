@@ -6,7 +6,7 @@
 
 {% if films %}
 <p class="muted">{{ films | length }} film{{ "s" if films | length > 1 }}</p>
-<div class="film-grid">
+<div class="film-grid" data-remove-on-unfavorite>
   {% for film in films %}{{ film_card(film, True) }}{% endfor %}
 </div>
 {% else %}

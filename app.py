@@ -2,8 +2,8 @@
 import os
 from datetime import timedelta
 
-from flask import (Flask, abort, flash, g, redirect, render_template, request,
-                   session, url_for)
+from flask import (Flask, abort, flash, g, jsonify, redirect, render_template,
+                   request, session, url_for)
 
 import api_client as api
 import forms
@@ -216,32 +216,41 @@ def favorites():
     return render_template("favorites.html", films=api.get_favorites(g.user["_id"]))
 
 
+def wants_json():
+    """Requête envoyée par favorites.js (fetch), qui attend du JSON plutôt qu'une redirection."""
+    return request.headers.get("X-Requested-With") == "fetch"
+
+
+def favorite_response(is_favorite, message, category="success", status=200):
+    """Réponse JSON pour favorites.js, ou message flash et redirection sinon."""
+    if wants_json():
+        return jsonify({"favorite": is_favorite, "message": message, "category": category}), status
+    flash(message, category)
+    return redirect(forms.safe_next(request.form.get("next"), url_for("favorites")))
+
+
 @app.post("/favorites/<film_id>/add")
 @login_required
 def add_favorite(film_id):
-    next_url = forms.safe_next(request.form.get("next"), url_for("favorites"))
     try:
         api.add_favorite(g.user["_id"], film_id)
-        flash("Film ajouté à vos favoris.", "success")
     except api.ApiError as err:
         if err.status not in (400, 404):
             raise
-        flash("Ce film n'existe plus.", "error")
-    return redirect(next_url)
+        return favorite_response(False, "Ce film n'existe plus.", "error", 404)
+    return favorite_response(True, "Film ajouté à vos favoris.")
 
 
 @app.post("/favorites/<film_id>/remove")
 @login_required
 def remove_favorite(film_id):
-    next_url = forms.safe_next(request.form.get("next"), url_for("favorites"))
     try:
         api.remove_favorite(g.user["_id"], film_id)
-        flash("Film retiré de vos favoris.", "success")
     except api.ApiError as err:
         if err.status != 404:
             raise
-        flash("Film introuvable.", "error")
-    return redirect(next_url)
+        return favorite_response(False, "Film introuvable.", "error", 404)
+    return favorite_response(False, "Film retiré de vos favoris.")
 
 
 # Administration des films

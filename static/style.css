@@ -19,10 +19,35 @@
   --tag-text: #2f4ac0;
   --radius: 8px;
   --shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  color-scheme: light;
+}
+
+/* Thème sombre :
+   - choix explicite (bouton de la barre, theme.js) : attribut data-theme="dark" sur <html>
+   - sans choix : thème du système, sauf si data-theme="light" */
+:root[data-theme="dark"] {
+  --bg: #12151c;
+  --surface: #1b2029;
+  --text: #e6e8ec;
+  --muted: #9aa3b2;
+  --border: #2c3340;
+  --primary: #6b8cff;
+  --primary-hover: #8aa4ff;
+  --on-primary: #0e1320;
+  --danger: #ff6b6b;
+  --danger-hover: #ff8787;
+  --success-bg: #173d24;
+  --success-text: #9be3b0;
+  --error-bg: #4a1d1d;
+  --error-text: #ffb3b3;
+  --tag-bg: #26304a;
+  --tag-text: #b4c4ff;
+  --shadow: none;
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #12151c;
     --surface: #1b2029;
     --text: #e6e8ec;
@@ -40,6 +65,7 @@
     --tag-bg: #26304a;
     --tag-text: #b4c4ff;
     --shadow: none;
+    color-scheme: dark;
   }
 }
 
@@ -147,6 +173,30 @@ main {
 .back-link:hover svg.icon { transform: translateX(-3px); }
 
 a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* Bouton du thème : soleil en thème sombre, lune en thème clair */
+button.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--surface);
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.3s ease;
+}
+button.theme-toggle:hover { color: var(--primary); border-color: var(--primary); background: var(--surface); }
+button.theme-toggle:active { transform: rotate(30deg); }
+button.theme-toggle[hidden] { display: none; }
+.theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: block; }
+  :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
+}
 
 /* Messages */
 
